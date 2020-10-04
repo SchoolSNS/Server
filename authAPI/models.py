@@ -62,7 +62,7 @@ class User (AbstractBaseUser, PermissionsMixin) :
     updated_at = models.DateTimeField(auto_now=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'identity', 'school', 'profile']
+    REQUIRED_FIELDS = ['username', 'identity', 'school', 'profile', 'introduce']
 
     objects = UserManager()
 
