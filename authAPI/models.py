@@ -57,7 +57,7 @@ class User (AbstractBaseUser, PermissionsMixin) :
     identity = models.CharField(max_length=6, choices=(('senior', 'senior'), ('junior', 'junior')))
     school = models.CharField(max_length=255)
     profile = models.ImageField(null=True, blank=True)
-    introduce = models.CharField(null=True)
+    introduce = models.CharField(null=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
