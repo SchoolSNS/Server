@@ -36,18 +36,18 @@ class Base64ImageField (serializers.ImageField) :
 
         return extension
 
-class registerSerializer (serializers.ModelSerializer) :
+class RegisterSerializer (serializers.ModelSerializer) :
     profile = Base64ImageField(use_url=True, allow_null=True)
     password = serializers.CharField(max_length=255, min_length=8, write_only=True)
     
     class Meta :
         model = User
-        fields = ['email', 'username', 'identity', 'password', 'school', 'profile', 'introduce']
+        fields = ['email', 'username', 'password', 'identity', 'school', 'profile', 'introduce']
         
     def create (self, validate_data) :
         return User.objects.create_user(**validate_data)
 
-class loginSerializer (serializers.ModelSerializer) :
+class LoginSerializer (serializers.ModelSerializer) :
     password = serializers.CharField(max_length=255, min_length=8)
 
     class Meta :
