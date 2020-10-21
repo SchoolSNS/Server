@@ -4,7 +4,7 @@ from django.utils import timezone
 
 class UserManager (BaseUserManager) :
     
-    def create_user (self, username, email, identity, school, profile, introduce, password=None) :
+    def create_user (self, username, email, identity, school, image, introduce, password=None) :
 
         if username is None :
             raise TypeError('Users should have a username')
@@ -17,7 +17,7 @@ class UserManager (BaseUserManager) :
             email=self.normalize_email(email),
             identity=identity,
             school=school,
-            profile=profile,
+            image=image,
             introduce=introduce,
         )
         
@@ -26,7 +26,7 @@ class UserManager (BaseUserManager) :
         
         return user
 
-    def create_superuser (self, username, email, identity, school, profile, introduce, password=None) :
+    def create_superuser (self, username, email, identity, school, image, introduce, password=None) :
 
         if password is None :
             raise TypeError('Password should not be none')
@@ -37,7 +37,7 @@ class UserManager (BaseUserManager) :
             identity,
             password,
             school,
-            profile,
+            image,
             introduce,
         )
         
@@ -56,7 +56,7 @@ class User (AbstractBaseUser, PermissionsMixin) :
     is_staff = models.BooleanField(default=True)
     identity = models.CharField(max_length=6, choices=(('senior', 'senior'), ('junior', 'junior')))
     school = models.CharField(max_length=255)
-    profile = models.ImageField(null=True, blank=True)
+    image = models.ImageField(null=True, blank=True)
     introduce = models.CharField(null=True, max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
