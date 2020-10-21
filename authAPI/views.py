@@ -1,5 +1,8 @@
 from .models import User
-from .serializers import RegisterSerializer, LoginSerializer
+from feedAPI.models import Post, Comment
+from .serializers import RegisterSerializer, LoginSerializer, UserProfileSerializer
+from feedAPI.serializers import PostSerializer, CommentSerializer
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -15,10 +18,14 @@ class RegisterView (GenericAPIView) :
 
         data = serializer.validated_data
 
+        proxy = {
+            "http": "hischool.pythonanywhere.com"
+        }
+
         url = 'https://open.neis.go.kr/hub/schoolInfo'
         param = {'key': '881eb3db21cb4cd6affd25cf7c97068c', 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': data['school']}
 
-        res = requests.get(url, params=param)
+        res = requests.get(url, params=param, proxies=proxy)
 
         if res.status_code == 200 :
             serializer.save()
@@ -46,3 +53,43 @@ class LoginView (GenericAPIView) :
         token = Token.objects.get_or_create(user=user)
 
         return Response({'token': F'{token[0]}'}, status=200)
+
+class UsersPostView (ModelViewSet) :
+    serializer_class = PostSerializer
+
+    def get_queryset (self) :
+        queryset = Post.objects.filter(owner=self.kwargs.get('user_id'))
+        return queryset
+
+class UsersCommentView (ModelViewSet) :
+    serializer_class = CommentSerializer
+
+    def get_queryset (self) :
+        queryset = Comment.objects.filter(owner=self.kwargs.get('user_id'))
+        return queryset
+
+class MyProfileView (ModelViewSet) :
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def list (self, request) :
+        queryset = User.objects.filter(email=self.request.user)
+        serializer = self.serializer_class(queryset, many=True)
+
+        for i in serializer.data :
+            data = i
+
+        return Response(data)
+
+class UserProfileView (ModelViewSet) :
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserProfileSerializer
+
+    def list (self, request) :
+        queryset = User.objects.filter(id=self.kwargs.get('user_id'))
+        serializer = self.serializer_class(queryset, many=True)
+
+        for i in serializer.data :
+            data = i
+        
+        return Response(data)
