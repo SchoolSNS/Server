@@ -23,8 +23,6 @@ class LoginSerializer (serializers.ModelSerializer) :
 
 class UserProfileSerializer (serializers.ModelSerializer) :
     image = serializers.ImageField(use_url=True)
-    following = serializers.SerializerMethodField()
-    followers = serializers.SerializerMethodField()
     
     class Meta :
         model = User
