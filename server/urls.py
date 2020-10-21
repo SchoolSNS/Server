@@ -8,4 +8,5 @@ urlpatterns = [
     path('auth/', include('authAPI.auth_urls')),
     path('user', include('authAPI.user_urls')),
     path('feed/', include('feedAPI.urls')),
+    path('search/', include('searchAPI.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

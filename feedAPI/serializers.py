@@ -11,13 +11,21 @@ class ImageSerializer (serializers.ModelSerializer) :
         model = Image
         fields = ('image', )
 
+class CommentImageSerializer (serializers.ModelSerializer) :
+    image = serializers.ImageField(use_url=True)
+
+    class Meta :
+        model = CommentImage
+        fields = ('image', )
+
 class CommentSerializer (serializers.ModelSerializer) :
     comment_id = serializers.IntegerField(source='id', read_only=True)
     owner = UserProfileSerializer(read_only=True)
+    images = CommentImageSerializer(read_only=True, many=True)
 
     class Meta :
         model = Comment
-        fields = ('comment_id', 'owner', 'content', 'created_at')
+        fields = ('comment_id', 'owner', 'content', 'images', 'created_at')
 
     def create (self, validated_data) :
         comment = Comment.objects.create(**validated_data, created_at=str(datetime.now().astimezone().replace(microsecond=0).isoformat()))
@@ -32,6 +40,14 @@ class CommentSerializer (serializers.ModelSerializer) :
             CommentImage.objects.create(comment=comment, image=image_data)
 
         return comment
+
+    def to_representation (self, instance) :
+        data = super().to_representation(instance)
+        images = data.pop('images')
+        images_array = [image.get('image') for image in images]
+        data.update({'image_urls': images_array})
+
+        return data
 
     def validate (self, attrs) :
         text = attrs.get('text', '')
@@ -64,7 +80,7 @@ class PostSerializer (serializers.ModelSerializer) :
 
     class Meta :
         model = Post
-        fields = ('id', 'owner', 'title', 'content', 'view_count', 'images', 'like_count', 'comment_count', 'liked_people', 'tag', 'created_at', 'comments')
+        fields = ('id', 'owner', 'title', 'content', 'images', 'like_count', 'comment_count', 'liked_people', 'tag', 'created_at', 'comments')
 
     def create (self, validated_data) :
         images_data = self.context['request'].FILES
