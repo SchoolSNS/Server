@@ -28,12 +28,4 @@ class UserProfileSerializer (serializers.ModelSerializer) :
     
     class Meta :
         model = User
-        fields = ['id', 'email', 'username', 'image', 'following', 'followers']
-
-    def get_following (self, obj) :
-        serializer = FollowingSerializer(obj.following.all(), many=True).data
-        return len(serializer)
-
-    def get_followers (self, obj) :
-        serializer = FollowersSerializer(obj.followers.all(), many=True).data
-        return len(serializer)
+        fields = ['id', 'email', 'username', 'image', 'identity', 'school']
