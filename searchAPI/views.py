@@ -1,3 +1,4 @@
+from authAPI.models import User
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -29,3 +30,13 @@ class SchoolSearchView (APIView) :
         print(res.json())
 
         return Response([])
+
+class UserSearchView (APIView) :
+    pagination_class = LargeResultsSetPagination
+
+    def get (self, request) :
+        username = self.kwargs.get('query')
+        
+        data = User.objects.filter(username=username)
+
+        return Response(data)
