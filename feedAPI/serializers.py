@@ -2,8 +2,8 @@ from rest_framework import serializers
 from .models import Post, Comment, Image, Like, CommentImage
 from authAPI.models import User
 from authAPI.serializers import UserProfileSerializer
+from datetime import datetime
 import random
-import datetime
 
 class ImageSerializer (serializers.ModelSerializer) :
     image = serializers.ImageField(use_url=True)
@@ -76,12 +76,11 @@ class PostSerializer (serializers.ModelSerializer) :
     comment_count = serializers.ReadOnlyField()
     images = ImageSerializer(read_only=True, many=True)
     liked_people = LikeSerializer(many=True, read_only=True)
-    tag = serializers.ListField(child=serializers.CharField(), allow_null=True)
     comments = CommentSerializer(many=True, read_only=True)
 
     class Meta :
         model = Post
-        fields = ('id', 'owner', 'title', 'content', 'images', 'like_count', 'comment_count', 'liked_people', 'tag', 'created_at', 'comments')
+        fields = ('id', 'owner', 'title', 'content', 'images', 'like_count', 'comment_count', 'liked_people', 'created_at', 'comments')
 
     def create (self, validated_data) :
         images_data = self.context['request'].FILES
