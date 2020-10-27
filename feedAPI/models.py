@@ -26,7 +26,7 @@ class Comment (models.Model) :
     created_at = models.CharField(max_length=60, null=True)
 
 class CommentImage (models.Model) :
-    post = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_images')
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_images')
     image = models.ImageField(null=True, blank=True)
 
 class Like (models.Model) :
