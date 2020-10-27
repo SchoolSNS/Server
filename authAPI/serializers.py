@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 class RegisterSerializer (serializers.ModelSerializer) :
     image = serializers.ImageField(use_url=True, allow_null=True)
     password = serializers.CharField(max_length=255, min_length=8, write_only=True)
-    introduce = serializers.CharField(required=False)
+    introduce = serializers.CharField(required=False, allow_null=True)
     
     class Meta :
         model = User
@@ -23,7 +23,7 @@ class LoginSerializer (serializers.ModelSerializer) :
         fields = ['email', 'password']
 
 class UserProfileSerializer (serializers.ModelSerializer) :
-    image = serializers.ImageField(use_url=True)
+    image = serializers.ImageField(use_url=True, read_only=True)
     
     class Meta :
         model = User
