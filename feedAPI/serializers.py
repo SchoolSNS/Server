@@ -22,11 +22,10 @@ class CommentImageSerializer (serializers.ModelSerializer) :
 class CommentSerializer (serializers.ModelSerializer) :
     comment_id = serializers.IntegerField(source='id', read_only=True)
     owner = UserProfileSerializer(read_only=True)
-    images = CommentImageSerializer(read_only=True, many=True)
 
     class Meta :
         model = Comment
-        fields = ('comment_id', 'owner', 'content', 'images', 'created_at')
+        fields = ('comment_id', 'owner', 'content', 'created_at')
 
     def create (self, validated_data) :
         comment = Comment.objects.create(**validated_data, created_at=str(datetime.now().astimezone().replace(microsecond=0).isoformat()))
