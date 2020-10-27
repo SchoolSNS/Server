@@ -38,21 +38,21 @@ class SchoolSearchView (APIView) :
         parsed_datas = []
 
         for raw_data in raw_datas[1].get('row') :
-            parsed_data['학교이름'] = raw_data['SCHUL_NM']
-            parsed_data['지역'] = raw_data['LCTN_SC_NM']
+            parsed_data['name'] = raw_data['SCHUL_NM']
+            parsed_data['region'] = raw_data['LCTN_SC_NM']
             
             if raw_data['COEDU_SC_NM'] == '남여공학' :
-                parsed_data['남여공학'] = [True]
+                parsed_data['concoction'] = [True]
 
             elif raw_data['COEDU_SC_NM'] == '남' :
-                parsed_data['남여공학'] = [False, '남']
+                parsed_data['concoction'] = [False, 'boy']
 
             elif raw_data['COEDU_SC_NM'] == '여' :
-                parsed_data['남여공학'] = [False, '여']
+                parsed_data['concoction'] = [False, 'girl']
 
-            parsed_data['주소'] = raw_data['ORG_RDNMA']
-            parsed_data['홈페이지'] = raw_data['HMPG_ADRES']
-            parsed_data['학교 유형'] = raw_data['HS_SC_NM']
+            parsed_data['address'] = raw_data['ORG_RDNMA']
+            parsed_data['website'] = raw_data['HMPG_ADRES']
+            parsed_data['school_type'] = raw_data['HS_SC_NM']
 
             parsed_datas.append(parsed_data)
             
@@ -76,8 +76,6 @@ class AllUserView (APIView) :
     pagination_class = LargeResultsSetPagination
 
     def get (self, request) :
-        username = self.request.GET.get('query')
-        
         users = User.objects.all()
         serializer = UserProfileSerializer(data=users, many=True)
         serializer.is_valid(raise_exception=False)

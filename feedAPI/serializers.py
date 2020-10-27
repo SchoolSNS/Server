@@ -22,11 +22,11 @@ class CommentImageSerializer (serializers.ModelSerializer) :
 class CommentSerializer (serializers.ModelSerializer) :
     comment_id = serializers.IntegerField(source='id', read_only=True)
     owner = UserProfileSerializer(read_only=True)
-    images = CommentImageSerializer(many=True, read_only=True)
+    comment_images = CommentImageSerializer(many=True, read_only=True)
 
     class Meta :
         model = Comment
-        fields = ('comment_id', 'owner', 'content', 'images', 'created_at')
+        fields = ('comment_id', 'owner', 'content', 'comment_images', 'created_at')
 
     def create (self, validated_data) :
         comment = Comment.objects.create(**validated_data, created_at=str(datetime.now().astimezone().replace(microsecond=0).isoformat()))
@@ -44,7 +44,7 @@ class CommentSerializer (serializers.ModelSerializer) :
 
     def to_representation (self, instance) :
         data = super().to_representation(instance)
-        images = data.pop('images')
+        images = data.pop('comment_images')
         images_array = [image.get('image') for image in images]
         data.update({'image_urls': images_array})
 
@@ -107,22 +107,19 @@ class PostSerializer (serializers.ModelSerializer) :
         liked_people_array = [liked_person.get('liked_people') for liked_person in liked_people]
         comments_array = [comment for comment in comments]
 
-        if comments_array != [] :
-            if len(comments_array) == 1 or len(comments_array) == 2:
-                data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_array})
+        if len(comments_array) == 1 or len(comments_array) == 2:
+            data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_array})
 
-            else :
-                comments_preview_array = []
-
-                for i in range(2) :
-                    random_comment = random.choice(comments_array)
-                    comments_array.remove(random_comment)
-                    comments_preview_array.append(random_comment)
-
-                data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_preview_array})
-                    
         else :
-            data.update({'image_urls': images_array, 'liked_people': liked_people_array})
+            comments_preview_array = []
+
+            for i in range(2) :
+                random_comment = random.choice(comments_array)
+                comments_array.remove(random_comment)
+                comments_preview_array.append(random_comment)
+
+            data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_preview_array})
+                    
 
         return data
 
