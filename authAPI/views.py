@@ -7,6 +7,7 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
+from django.conf import settings
 import requests
 
 class RegisterView (GenericAPIView) :
@@ -23,7 +24,7 @@ class RegisterView (GenericAPIView) :
         }
 
         url = 'https://open.neis.go.kr/hub/schoolInfo'
-        param = {'key': '881eb3db21cb4cd6affd25cf7c97068c', 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': data['school']}
+        param = {'key': settings.SCHOOL_API_KEY, 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': data['school']}
 
         res = requests.get(url, params=param, proxies=proxy)
 
