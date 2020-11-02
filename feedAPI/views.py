@@ -35,27 +35,6 @@ class ReadListPostView (ModelViewSet) :
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsAuthenticated]
 
-    def list (self, request) :
-        datas = []
-
-        for i in self.queryset :
-            serializer = self.serializer_class(i)
-            data = serializer.data
-            try :
-                like = Like.objects.get(post=i, liked_people=self.request.user)
-
-            except Like.DoesNotExist :
-                data['is_liked'] = False
-
-            is_liked = data.get('is_liked', None)
-                
-            if is_liked is None :
-                data['is_liked'] = True
-
-            datas.append(data)
-
-        return Response(datas)
-
 class ReadOnePostView (ModelViewSet) :
     serializer_class = PostSerializer
     queryset = Post.objects.all()

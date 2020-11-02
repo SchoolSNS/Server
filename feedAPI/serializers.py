@@ -77,10 +77,22 @@ class PostSerializer (serializers.ModelSerializer) :
     images = ImageSerializer(read_only=True, many=True)
     liked_people = LikeSerializer(many=True, read_only=True)
     comments = CommentSerializer(many=True, read_only=True)
+    is_liked = serializers.SerializerMethodField()
 
     class Meta :
         model = Post
-        fields = ('id', 'owner', 'title', 'content', 'images', 'like_count', 'comment_count', 'liked_people', 'created_at', 'comments')
+        fields = ('id', 'owner', 'title', 'content', 'images', 'like_count', 'comment_count', 'liked_people', 'created_at', 'comments', 'is_liked')
+
+    def get_is_liked (self, obj) :
+        user =  self.context['request'].user
+        
+        try :
+            like = Like.objects.get(liked_people=user, pk=obj.pk)
+
+        except Like.DoesNotExist :
+            return False
+
+        return True
 
     def create (self, validated_data) :
         images_data = self.context['request'].FILES
@@ -106,21 +118,21 @@ class PostSerializer (serializers.ModelSerializer) :
         images_array = [image.get('image') for image in images]
         liked_people_array = [liked_person.get('liked_people') for liked_person in liked_people]
         comments_array = [comment for comment in comments]
+        
+        if comments_array != [] :
+            if len(comments_array) == 1 or len(comments_array) == 2:
+                data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_array})
 
-        if len(comments_array) == 1 or len(comments_array) == 2:
-            data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_array})
+            else :
+                comments_preview_array = []
 
-        else :
-            comments_preview_array = []
+                for i in range(2) :
+                    random_comment = random.choice(comments_array)
+                    comments_array.remove(random_comment)
+                    comments_preview_array.append(random_comment)
 
-            for i in range(2) :
-                random_comment = random.choice(comments_array)
-                comments_array.remove(random_comment)
-                comments_preview_array.append(random_comment)
-
-            data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_preview_array})
+                data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_preview_array})
                     
-
         return data
 
     def validate (self, attrs) :

@@ -1,7 +1,8 @@
 from authAPI.serializers import UserProfileSerializer
 from authAPI.models import User
 from feedAPI.serializers import PostSerializer 
-from feedAPI.models import Post 
+from feedAPI.models import Post
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -84,6 +85,7 @@ class AllUserView (APIView) :
 
 class PostSearchView (APIView) :
     pagination_class = LargeResultsSetPagination
+    permission_classes = [IsAuthenticated]
 
     def get (self, request) :
         post_title = self.request.GET.get('query')
