@@ -1,5 +1,7 @@
 from authAPI.serializers import UserProfileSerializer
 from authAPI.models import User
+from feedAPI.serializers import PostSerializer 
+from feedAPI.models import Post 
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
@@ -67,8 +69,7 @@ class UserSearchView (APIView) :
         username = self.request.GET.get('query')
         
         users = User.objects.filter(username=username)
-        serializer = UserProfileSerializer(data=users, many=True)
-        serializer.is_valid(raise_exception=False)
+        serializer = UserProfileSerializer(users, many=True)
 
         return Response(serializer.data)
 
@@ -77,7 +78,17 @@ class AllUserView (APIView) :
 
     def get (self, request) :
         users = User.objects.all()
-        serializer = UserProfileSerializer(data=users, many=True)
-        serializer.is_valid(raise_exception=False)
+        serializer = UserProfileSerializer(users, many=True)
+
+        return Response(serializer.data)
+
+class PostSearchView (APIView) :
+    pagination_class = LargeResultsSetPagination
+
+    def get (self, request) :
+        post_title = self.request.GET.get('query')
+        
+        posts = Post.objects.filter(title=post_title)
+        serializer = PostSerializer(posts, many=True)
 
         return Response(serializer.data)
