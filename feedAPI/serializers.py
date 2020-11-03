@@ -42,6 +42,61 @@ class CommentSerializer (serializers.ModelSerializer) :
 
         return comment
 
+    def update (self, instance, validated_data) :
+        images_data = self.context['request'].FILES
+        comment_images = CommentImage.objects.filter(comment=instance)
+        
+        new_images_count = len(images_data)
+        original_images_count = len(comment_images)
+
+        new_image_big_end = False
+        new_image_small_end = False
+
+        for i in range(1, 6) :
+            image_data = images_data.get(F'image{i}', None)
+
+            if original_images_count < new_images_count :
+                if original_images_count == 0 :
+                    new_image_big_end = True
+
+                if new_image_big_end is False :
+                    comment_images[i-1].image = image_data
+                    comment_images[i-1].save(update_fields=('image', ))
+
+                    if comment_images[i-1] == comment_images[original_images_count - 1] :
+                        new_image_big_end = True
+
+                elif new_image_big_end is True :
+                    if image_data is not None :
+                        CommentImage.objects.create(comment=instance, image=image_data)
+                    else :
+                        break
+
+            elif original_images_count > new_images_count :
+                if new_image_small_end == False : 
+
+                    if image_data is not None :
+                        comment_images[i-1].image = image_data
+                        comment_images[i-1].save(update_fields=('image', ))
+
+                    if image_data is None :
+                        comment_images[i-1].delete()
+
+                        if comment_images[i-1] == comment_images[original_images_count - 1] :
+                            new_image_small_end = True
+
+                elif new_image_small_end == True :
+                    break
+
+            else :
+                if image_data == None :
+                    break
+                
+                comment_images[i-1].image = image_data
+                comment_images[i-1].save(update_fields=('image', ))
+
+        return instance
+
     def to_representation (self, instance) :
         data = super().to_representation(instance)
         images = data.pop('comment_images')
