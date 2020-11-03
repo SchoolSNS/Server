@@ -84,10 +84,10 @@ class PostSerializer (serializers.ModelSerializer) :
         fields = ('id', 'owner', 'title', 'content', 'images', 'like_count', 'comment_count', 'liked_people', 'created_at', 'comments', 'is_liked')
 
     def get_is_liked (self, obj) :
-        user =  self.context['request'].user
+        user = self.context['request'].user
         
         try :
-            like = Like.objects.get(liked_people=user, pk=obj.pk)
+            like = Like.objects.get(liked_people=user, post=obj)
 
         except Like.DoesNotExist :
             return False
