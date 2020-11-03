@@ -95,7 +95,11 @@ class CommentSerializer (serializers.ModelSerializer) :
                 comment_images[i-1].image = image_data
                 comment_images[i-1].save(update_fields=('image', ))
 
-        instance.content = validated_data['content']
+        content = validated_data.get('content', None)
+
+        if content is not None :
+            instance.content = content
+
         instance.save(update_fields=('content', ))
 
         return instance
@@ -219,8 +223,15 @@ class PostSerializer (serializers.ModelSerializer) :
                 images[i-1].image = image_data
                 images[i-1].save(update_fields=('image', ))
 
-        instance.title = validated_data['title']
-        instance.content = validated_data['content']
+        title = validated_data.get('title', None)
+        content = validated_data.get('content', None)
+        
+        if title is not None :
+            instance.title = title
+        
+        if content is not None :
+            instance.content = content
+        
         instance.save(update_fields=('text', 'content', ))
 
         return instance
