@@ -31,7 +31,7 @@ class CreatePostView (ModelViewSet) :
 
 class ReadListPostView (ModelViewSet) :
     serializer_class = PostSerializer
-    queryset = Post.objects.all()
+    queryset = Post.objects.all().order_by('-pk')
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsAuthenticated]
 
@@ -72,7 +72,7 @@ class CreateCommentView (ModelViewSet) :
 
 class ReadCommentView (ModelViewSet) :
     serializer_class = CommentSerializer
-    queryset = Comment.objects.all()
+    queryset = Comment.objects.all().order_by('pk')
 
 class UpdateDeleteCommentView (ModelViewSet) :
     serializer_class = CommentSerializer
@@ -84,7 +84,6 @@ class UpdateDeleteCommentView (ModelViewSet) :
 
     def update (self, request, *args, **kwargs) :
         super().update(request, *args, **kwargs)
-        serializer = self.serializer_class(data=request.data)
         return Response({'success': '댓글 작성이 완료되었습니다.'}, status=200)
 
     def destroy (self, request, *args, **kwargs) :
@@ -104,7 +103,7 @@ class ReadLikerView (ModelViewSet) :
 
         for liker in likers :
             userId = liker.get('liked_people_id')
-            user = User.objects.filter(pk=userId)
+            user = User.objects.filter(pk=userId).order_by('pk')
             serializer = self.serializer_class(user, many=True)
             
             if serializer.data != [] :

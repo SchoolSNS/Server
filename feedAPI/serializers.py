@@ -95,6 +95,9 @@ class CommentSerializer (serializers.ModelSerializer) :
                 comment_images[i-1].image = image_data
                 comment_images[i-1].save(update_fields=('image', ))
 
+        instance.content = validated_data['content']
+        instance.save(update_fields=('content', ))
+
         return instance
 
     def to_representation (self, instance) :
@@ -106,11 +109,11 @@ class CommentSerializer (serializers.ModelSerializer) :
         return data
 
     def validate (self, attrs) :
-        text = attrs.get('text', '')
+        content = attrs.get('content', '')
 
         error = {}
 
-        if text is None :
+        if content is None :
             error['message'] = '본문은 빈칸일 수 없습니다.'
             raise serializers.ValidationError(error)
 
@@ -215,6 +218,10 @@ class PostSerializer (serializers.ModelSerializer) :
                 
                 images[i-1].image = image_data
                 images[i-1].save(update_fields=('image', ))
+
+        instance.title = validated_data['title']
+        instance.content = validated_data['content']
+        instance.save(update_fields=('text', 'content', ))
 
         return instance
 
