@@ -91,7 +91,7 @@ class CommentSerializer (serializers.ModelSerializer) :
             else :
                 if image_data == None :
                     break
-                
+
                 comment_images[i-1].image = image_data
                 comment_images[i-1].save(update_fields=('image', ))
 
@@ -163,6 +163,61 @@ class PostSerializer (serializers.ModelSerializer) :
 
         return post
 
+    def update (self, instance, validated_data) :
+        images_data = self.context['request'].FILES
+        images = Image.objects.filter(post=instance)
+        
+        new_images_count = len(images_data)
+        original_images_count = len(images)
+
+        new_image_big_end = False
+        new_image_small_end = False
+
+        for i in range(1, 6) :
+            image_data = images_data.get(F'image{i}', None)
+
+            if original_images_count < new_images_count :
+                if original_images_count == 0 :
+                    new_image_big_end = True
+
+                if new_image_big_end is False :
+                    images[i-1].image = image_data
+                    images[i-1].save(update_fields=('image', ))
+
+                    if images[i-1] == images[original_images_count - 1] :
+                        new_image_big_end = True
+
+                elif new_image_big_end is True :
+                    if image_data is not None :
+                        Image.objects.create(post=instance, image=image_data)
+                    else :
+                        break
+
+            elif original_images_count > new_images_count :
+                if new_image_small_end == False : 
+
+                    if image_data is not None :
+                        images[i-1].image = image_data
+                        images[i-1].save(update_fields=('image', ))
+
+                    if image_data is None :
+                        images[i-1].delete()
+
+                        if images[i-1] == images[original_images_count - 1] :
+                            new_image_small_end = True
+
+                elif new_image_small_end == True :
+                    break
+
+            else :
+                if image_data == None :
+                    break
+                
+                images[i-1].image = image_data
+                images[i-1].save(update_fields=('image', ))
+
+        return instance
+
     def to_representation (self, instance) :
         data = super().to_representation(instance)
 
@@ -187,6 +242,9 @@ class PostSerializer (serializers.ModelSerializer) :
                     comments_preview_array.append(random_comment)
 
                 data.update({'image_urls': images_array, 'liked_people': liked_people_array, 'comment_preview': comments_preview_array})
+
+        else :
+            data.update({'image_urls': images_array, 'liked_people': liked_people_array})
                     
         return data
 
