@@ -226,11 +226,8 @@ class PostSerializer (serializers.ModelSerializer) :
         title = validated_data.get('title', None)
         content = validated_data.get('content', None)
         
-        if title is not None :
-            instance.title = title
-        
-        if content is not None :
-            instance.content = content
+        instance.title = title
+        instance.content = content
         
         instance.save(update_fields=('title', 'content', ))
 
