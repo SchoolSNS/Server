@@ -74,6 +74,9 @@ class ReadCommentView (ModelViewSet) :
     serializer_class = CommentSerializer
     queryset = Comment.objects.all().order_by('pk')
 
+    def get_queryset (self) :
+        return super().get_queryset().filter(post=self.kwargs.get('post_id'))
+
 class UpdateDeleteCommentView (ModelViewSet) :
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated, IsOwner]
