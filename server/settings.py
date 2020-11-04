@@ -41,6 +41,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'cloudinary_storage',
+    'django.contrib.staticfiles',
+    'cloudinary',
     'authAPI',
     'feedAPI',
 ]
@@ -90,6 +93,14 @@ DATABASES = {
         'PORT': '5432'
     }
 }
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'hyyaerucd',
+    'API_KEY': '277614132869367',
+    'API_SECRET': 'mbieqyavDmGNsZxWGa_hBAHL_Xk',
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
