@@ -232,7 +232,7 @@ class PostSerializer (serializers.ModelSerializer) :
         if content is not None :
             instance.content = content
         
-        instance.save(update_fields=('text', 'content', ))
+        instance.save(update_fields=('title', 'content', ))
 
         return instance
 
