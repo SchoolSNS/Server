@@ -91,6 +91,6 @@ class PostSearchView (APIView) :
         post_title = self.request.GET.get('query')
         
         posts = Post.objects.filter(title=post_title)
-        serializer = PostSerializer(posts, many=True)
+        serializer = PostSerializer(posts, many=True, context={'request': request})
 
         return Response(serializer.data)
