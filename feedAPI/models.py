@@ -32,3 +32,6 @@ class CommentImage (models.Model) :
 class Like (models.Model) :
     liked_people = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='liked_people', null=True)
+
+    def __str__ (self) :
+        return self.post.title
