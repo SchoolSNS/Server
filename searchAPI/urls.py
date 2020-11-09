@@ -3,7 +3,7 @@ from .views import SchoolSearchView, UserSearchView, AllUserView, PostSearchView
 
 urlpatterns = [
     path('school', SchoolSearchView.as_view()),
-    path('search-user', UserSearchView.as_view()),
+    path('search-user', UserSearchView.as_view({'get': 'list'})),
     path('all-user', AllUserView.as_view()),
-    path('post', PostSearchView.as_view()),
+    path('post', PostSearchView.as_view({'get': 'list'})),
 ]

@@ -4,9 +4,11 @@ from feedAPI.serializers import PostSerializer
 from feedAPI.models import Post
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from django.conf import settings
+from rest_framework.filters import SearchFilter
 import requests
 
 class LargeResultsSetPagination (PageNumberPagination) :
@@ -63,16 +65,12 @@ class SchoolSearchView (APIView) :
 
         return Response(parsed_datas)
 
-class UserSearchView (APIView) :
+class UserSearchView (ModelViewSet) :
     pagination_class = LargeResultsSetPagination
-
-    def get (self, request) :
-        username = self.request.GET.get('query')
-        
-        users = User.objects.filter(username=username)
-        serializer = UserProfileSerializer(users, many=True)
-
-        return Response(serializer.data)
+    filter_backends = [SearchFilter]
+    search_fields = ['username']
+    serializer_class = UserProfileSerializer
+    queryset = User.objects.all()
 
 class AllUserView (APIView) :
     pagination_class = LargeResultsSetPagination
@@ -83,14 +81,9 @@ class AllUserView (APIView) :
 
         return Response(serializer.data)
 
-class PostSearchView (APIView) :
+class PostSearchView (ModelViewSet) :
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsAuthenticated]
-
-    def get (self, request) :
-        post_title = self.request.GET.get('query')
-        
-        posts = Post.objects.filter(title=post_title)
-        serializer = PostSerializer(posts, many=True, context={'request': request})
-
-        return Response(serializer.data)
+    search_fields = ['title']
+    serializer_class = PostSerializer
+    queryset = Post.objects.all()
