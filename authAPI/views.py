@@ -2,6 +2,7 @@ from .models import User
 from feedAPI.models import Post, Comment
 from .serializers import RegisterSerializer, LoginSerializer, UserProfileSerializer
 from feedAPI.serializers import PostSerializer, CommentSerializer
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -17,23 +18,8 @@ class RegisterView (GenericAPIView) :
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        data = serializer.validated_data
-
-        proxy = {
-            "http": "hischool.pythonanywhere.com"
-        }
-
-        url = 'https://open.neis.go.kr/hub/schoolInfo'
-        param = {'key': settings.SCHOOL_API_KEY, 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': data['school']}
-
-        res = requests.get(url, params=param, proxies=proxy)
-
-        if res.status_code == 200 :
-            serializer.save()
-            return Response({'success': '회원가입에 성공했습니다.'}, status=201)
-
-        else :
-            return Response({'message': ['학교이름을 확인해주세요.']}, status=400)
+        serializer.save()
+        return Response({'success': '회원가입에 성공했습니다.'}, status=201)
 
 class LoginView (GenericAPIView) :
     serializer_class = LoginSerializer
@@ -94,3 +80,42 @@ class UserProfileView (ModelViewSet) :
             data = i
         
         return Response(data)
+
+# class DeviceTokenView (APIView) :
+#     permission_classes = [IsAuthenticated]
+    
+#     def post (self, request) :
+
+#         try :
+#             device_token = DeviceToken.objects.get(user=self.request.user)
+
+#         except DeviceToken.DoesNotExist :
+#             serializer = DeviceTokenSerializer(data=request.data)
+#             serializer.is_valid(raise_exception=False)
+#             serializer.save()
+
+#             return Response({'success': '디바이스 토큰을 저장하였습니다.'}, status=200)
+
+#         return Response({'message': ['이미 디바이스 토큰이 존재합니다. PUT을 해주세요.']}, status=400)
+
+#     def put (self, request) :
+
+#         try :
+#             device_token = DeviceToken.objects.get(user=self.request.user)
+
+#         except DeviceToken.DoesNotExist :
+#             return Response({'message': ['디바이스 토큰이 없습니다. 우선 POST를 해주세요.']}, status=400)
+
+#         serializer = DeviceTokenSerializer(device_token, data=request.data)
+#         print(device_token)
+#         serializer.is_valid(raise_exception=False)
+#         serializer.save()
+
+#         return Response({'success': '디바이스 토큰을 저장하였습니다.'}, status=400)
+
+#     def delete (self, request) :
+#         device_token = DeviceToken.objects.get(user=self.request.user)
+
+#         if device_token != None :
+#             device_token.delete()
+#         return Response({'message': ['이전에 디바이스 토큰을 저장한 적이 없습니다. POST를 해주세요.']}, status=400)
