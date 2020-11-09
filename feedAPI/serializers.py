@@ -3,6 +3,8 @@ from .models import Post, Comment, Image, Like, CommentImage
 from authAPI.models import User
 from authAPI.serializers import UserProfileSerializer
 from datetime import datetime
+from django.conf import settings
+import requests
 import random
 
 class ImageSerializer (serializers.ModelSerializer) :
@@ -143,7 +145,7 @@ class PostSerializer (serializers.ModelSerializer) :
 
     class Meta :
         model = Post
-        fields = ('id', 'owner', 'title', 'content', 'images', 'like_count', 'comment_count', 'liked_people', 'created_at', 'comments', 'is_liked')
+        fields = ('id', 'owner', 'title', 'content', 'school', 'images', 'like_count', 'comment_count', 'liked_people', 'created_at', 'comments', 'is_liked')
 
     def get_is_liked (self, obj) :
         user = self.context['request'].user
@@ -267,6 +269,7 @@ class PostSerializer (serializers.ModelSerializer) :
         title = attrs.get('title', '')
         content = attrs.get('text', '')
         tag = attrs.get('tag', '')
+        school = attrs.get('school', '')
 
         error = {}
 
@@ -280,6 +283,15 @@ class PostSerializer (serializers.ModelSerializer) :
 
         if content is None :
             error['message'] = '본문은 빈칸일 수 없습니다.'    
+            raise serializers.ValidationError(error)
+
+        url = 'https://open.neis.go.kr/hub/schoolInfo'
+        param = {'key': settings.SCHOOL_API_KEY, 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': school}
+
+        res = requests.get(url, params=param)
+
+        if res.json()['RESULT'].get('MESSAGE', None) is not None :
+            error['message'] = '학교 이름을 확인해주세요.'
             raise serializers.ValidationError(error)
 
         return attrs

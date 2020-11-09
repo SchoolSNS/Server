@@ -6,6 +6,7 @@ class Post (models.Model) :
     title = models.CharField(max_length=40)
     content = models.TextField(max_length=300)
     created_at = models.CharField(max_length=60, null=True)
+    school = models.CharField(max_length=255, null=True)
 
     @property
     def comment_count (self) :
