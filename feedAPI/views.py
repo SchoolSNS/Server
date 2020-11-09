@@ -8,6 +8,8 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.pagination import PageNumberPagination
+import requests
+from django.conf import settings
 
 class LargeResultsSetPagination (PageNumberPagination) :
     page_size = 15
@@ -21,6 +23,7 @@ class CreatePostView (ModelViewSet) :
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticated]
     queryset = Post.objects.all()
+    is_saved = False
 
     def perform_create (self, serializer) :
         serializer.save(owner=self.request.user)
@@ -34,6 +37,16 @@ class ReadListPostView (ModelViewSet) :
     queryset = Post.objects.all().order_by('-pk')
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsAuthenticated]
+
+class ReadFilterBySchoolPostView (ModelViewSet) :
+    serializer_class = PostSerializer
+    pagination_class = LargeResultsSetPagination
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset (self) :
+        user = self.request.user
+        queryset = Post.objects.filter(school=user.school).order_by('-pk')
+        return queryset
 
 class ReadOnePostView (ModelViewSet) :
     serializer_class = PostSerializer
