@@ -37,11 +37,11 @@ class LoginSerializer (serializers.ModelSerializer) :
         fields = ['email', 'password']
 
 class UserProfileSerializer (serializers.ModelSerializer) :
-    image = serializers.ImageField(use_url=True, read_only=True)
-    
+    profile = serializers.ImageField(source='image')
+
     class Meta :
         model = User
-        fields = ['id', 'email', 'username', 'image', 'identity', 'school']
+        fields = ['id', 'email', 'username', 'profile', 'identity', 'school']
 
 # class DeviceTokenSerializer (serializers.ModelSerializer) :
 
