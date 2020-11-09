@@ -23,7 +23,7 @@ class SchoolSearchView (APIView) :
     pagination_class = LargeResultsSetPagination
 
     def get (self, request) :
-        school_name = self.request.GET.get('query')
+        school_name = self.request.GET.get('search')
 
         url = 'https://open.neis.go.kr/hub/schoolInfo'
         param = {'key': settings.SCHOOL_API_KEY, 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': school_name}
