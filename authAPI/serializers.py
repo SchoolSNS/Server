@@ -19,14 +19,19 @@ class RegisterSerializer (serializers.ModelSerializer) :
     def validate (self, attrs) :  
         school = attrs.get('school', '')
 
+        error = {}
+
         url = 'https://open.neis.go.kr/hub/schoolInfo'
         param = {'key': settings.SCHOOL_API_KEY, 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': school}
 
         res = requests.get(url, params=param)
 
-        if res.json()['RESULT'].get('MESSAGE', None) is not None :
-            error['message'] = '학교 이름을 확인해주세요.'
-            raise serializers.ValidationError(error)
+        if res.json().get('RESULT', None) is not None :
+            if res.json().get('RESULT', None).get('MESSAGE', None) is not None :
+                error['message'] = '학교 이름을 확인해주세요.'
+                raise serializers.ValidationError(error)
+
+        return attrs
 
         
 class LoginSerializer (serializers.ModelSerializer) :
