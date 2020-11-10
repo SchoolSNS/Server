@@ -52,7 +52,7 @@ class UsersCommentView (ModelViewSet) :
     serializer_class = CommentSerializer
 
     def get_queryset (self) :
-        queryset = Comment.objects.filter(owner=self.kwargs.get('user_id'))
+        queryset = Post.objects.filter(owner=self.kwargs.get('user_id'))
         return queryset
 
 class MyProfileView (ModelViewSet) :
@@ -73,7 +73,28 @@ class UserProfileView (ModelViewSet) :
     serializer_class = UserProfileSerializer
 
     def list (self, request) :
-        queryset = User.objects.filter(id=self.kwargs.get('user_id'))
+        try :
+            queryset = User.objects.get(id=self.kwargs.get('user_id'))
+
+        except User.DoesNotExist:
+            return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
+
+        serializer = self.serializer_class(queryset, many=True)
+
+        for i in serializer.data :
+            data = i
+        
+        return Response(data)
+
+class UserEmailProfileView (ModelViewSet) :
+    serializer_class = UserProfileSerializer
+
+    def list (self, request) :
+        try :
+            queryset = User.objects.get(email=request.GET.get('email'))
+        except User.DoesNotExist:
+            return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
+
         serializer = self.serializer_class(queryset, many=True)
 
         for i in serializer.data :
