@@ -74,7 +74,7 @@ class UserProfileView (ModelViewSet) :
 
     def list (self, request) :
         try :
-            queryset = User.objects.get(id=self.kwargs.get('user_id'))
+            queryset = User.objects.filter(id=self.kwargs.get('user_id'))
 
         except User.DoesNotExist:
             return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
@@ -91,16 +91,13 @@ class UserEmailProfileView (ModelViewSet) :
 
     def list (self, request) :
         try :
-            queryset = User.objects.get(email=request.GET.get('email'))
+            queryset = User.objects.filter(email=request.GET.get('email'))
         except User.DoesNotExist:
             return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
 
         serializer = self.serializer_class(queryset, many=True)
-
-        for i in serializer.data :
-            data = i
         
-        return Response(data)
+        return Response(serializer.data[0])
 
 # class DeviceTokenView (APIView) :
 #     permission_classes = [IsAuthenticated]
