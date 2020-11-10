@@ -60,80 +60,39 @@ class MyProfileView (ModelViewSet) :
     serializer_class = UserProfileSerializer
 
     def list (self, request) :
-        queryset = User.objects.filter(email=self.request.user)
-        serializer = self.serializer_class(queryset, many=True)
+        try :
+            queryset = User.objects.filter(email=self.request.user)
 
-        for i in serializer.data :
-            data = i
+        except :
+            return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
 
-        return Response(data)
+        serializer = self.serializer_class(queryset, many=True, context={'request': request})
+
+        return Response(serializer.data[0])
 
 class UserProfileView (ModelViewSet) :
     permission_classes = [IsAuthenticated]
     serializer_class = UserProfileSerializer
 
-    def list (self, request) :
+    def list (self, request, *args, **kwargs) :
+        queryset = User.objects.filter(id=kwargs.get('user_id'))
+        serializer = self.serializer_class(queryset, many=True, context={'request': request})
+
         try :
-            queryset = User.objects.filter(id=self.kwargs.get('user_id'))
+            return Response(serializer.data[0])
 
-        except User.DoesNotExist:
+        except IndexError :
             return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
-
-        serializer = self.serializer_class(queryset, many=True)
-
-        for i in serializer.data :
-            data = i
-        
-        return Response(data)
 
 class UserEmailProfileView (ModelViewSet) :
     serializer_class = UserProfileSerializer
 
     def list (self, request) :
-        try :
-            queryset = User.objects.filter(email=request.GET.get('email'))
-        except User.DoesNotExist:
-            return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
-
-        serializer = self.serializer_class(queryset, many=True)
+        queryset = User.objects.filter(email=request.GET.get('email'))
+        serializer = self.serializer_class(queryset, many=True, context={'request': request})
         
-        return Response(serializer.data[0])
+        try :
+            return Response(serializer.data[0])
 
-# class DeviceTokenView (APIView) :
-#     permission_classes = [IsAuthenticated]
-    
-#     def post (self, request) :
-
-#         try :
-#             device_token = DeviceToken.objects.get(user=self.request.user)
-
-#         except DeviceToken.DoesNotExist :
-#             serializer = DeviceTokenSerializer(data=request.data)
-#             serializer.is_valid(raise_exception=False)
-#             serializer.save()
-
-#             return Response({'success': '디바이스 토큰을 저장하였습니다.'}, status=200)
-
-#         return Response({'message': ['이미 디바이스 토큰이 존재합니다. PUT을 해주세요.']}, status=400)
-
-#     def put (self, request) :
-
-#         try :
-#             device_token = DeviceToken.objects.get(user=self.request.user)
-
-#         except DeviceToken.DoesNotExist :
-#             return Response({'message': ['디바이스 토큰이 없습니다. 우선 POST를 해주세요.']}, status=400)
-
-#         serializer = DeviceTokenSerializer(device_token, data=request.data)
-#         print(device_token)
-#         serializer.is_valid(raise_exception=False)
-#         serializer.save()
-
-#         return Response({'success': '디바이스 토큰을 저장하였습니다.'}, status=400)
-
-#     def delete (self, request) :
-#         device_token = DeviceToken.objects.get(user=self.request.user)
-
-#         if device_token != None :
-#             device_token.delete()
-#         return Response({'message': ['이전에 디바이스 토큰을 저장한 적이 없습니다. POST를 해주세요.']}, status=400)
+        except IndexError :
+            return Response({'message': ['해당 유저를 찾을 수 없습니다.']}, status=400)
