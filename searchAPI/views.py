@@ -20,19 +20,15 @@ class LargeResultsSetPagination (PageNumberPagination) :
         return Response(data)
 
 class SchoolSearchView (APIView) :
-    pagination_class = LargeResultsSetPagination
 
     def get (self, request) :
         school_name = self.request.GET.get('search')
+        page = self.request.GET.get('page')
 
         url = 'https://open.neis.go.kr/hub/schoolInfo'
-        param = {'key': settings.SCHOOL_API_KEY, 'Type': 'json', 'pIndex': 1, 'pSize': 100, 'SCHUL_NM': school_name}
+        param = {'key': settings.SCHOOL_API_KEY, 'Type': 'json', 'pIndex': page, 'pSize': 100, 'SCHUL_NM': school_name}
 
-        proxy = {
-            "http": "hischool.pythonanywhere.com"
-        }
-
-        res = requests.get(url, params=param, proxies=proxy)
+        res = requests.get(url, params=param)
 
         raw_datas = res.json().get('schoolInfo')
 
@@ -43,23 +39,24 @@ class SchoolSearchView (APIView) :
         parsed_datas = []
 
         for raw_data in raw_datas[1].get('row') :
-            parsed_data['name'] = raw_data['SCHUL_NM']
-            parsed_data['region'] = raw_data['LCTN_SC_NM']
-            
-            if raw_data['COEDU_SC_NM'] == '남여공학' :
-                parsed_data['concoction'] = [True]
+            if raw_data['SCHUL_NM'] in '고등학교' :
+                parsed_data['name'] = raw_data['SCHUL_NM']
+                parsed_data['region'] = raw_data['LCTN_SC_NM']
+                
+                if raw_data['COEDU_SC_NM'] == '남여공학' :
+                    parsed_data['concoction'] = [True]
 
-            elif raw_data['COEDU_SC_NM'] == '남' :
-                parsed_data['concoction'] = [False, 'boy']
+                elif raw_data['COEDU_SC_NM'] == '남' :
+                    parsed_data['concoction'] = [False, 'boy']
 
-            elif raw_data['COEDU_SC_NM'] == '여' :
-                parsed_data['concoction'] = [False, 'girl']
+                elif raw_data['COEDU_SC_NM'] == '여' :
+                    parsed_data['concoction'] = [False, 'girl']
 
-            parsed_data['address'] = raw_data['ORG_RDNMA']
-            parsed_data['website'] = raw_data['HMPG_ADRES']
-            parsed_data['school_type'] = raw_data['HS_SC_NM']
+                parsed_data['address'] = raw_data['ORG_RDNMA']
+                parsed_data['website'] = raw_data['HMPG_ADRES']
+                parsed_data['school_type'] = raw_data['HS_SC_NM']
 
-            parsed_datas.append(parsed_data)
+                parsed_datas.append(parsed_data)
             
             parsed_data = {}
 
