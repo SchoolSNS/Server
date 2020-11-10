@@ -39,7 +39,7 @@ class SchoolSearchView (APIView) :
         parsed_datas = []
 
         for raw_data in raw_datas[1].get('row') :
-            if raw_data['SCHUL_NM'] in '고등학교' :
+            if '고등학교' in raw_data['SCHUL_NM'] :
                 parsed_data['name'] = raw_data['SCHUL_NM']
                 parsed_data['region'] = raw_data['LCTN_SC_NM']
                 
