@@ -44,8 +44,8 @@ class ReadFilterBySchoolPostView (ModelViewSet) :
     permission_classes = [IsAuthenticated]
 
     def get_queryset (self) :
-        user = self.request.user
-        queryset = Post.objects.filter(school=user.school).order_by('-pk')
+        school = self.request.GET.get('school')
+        queryset = Post.objects.filter(school=school).order_by('-pk')
         return queryset
 
 class ReadOnePostView (ModelViewSet) :
