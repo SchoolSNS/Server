@@ -58,7 +58,7 @@ class CommentPushAlarmView (APIView) :
                 title=title,
             ),
             android=messaging.AndroidConfig(
-                channelId='Channel ID'
+                android_channel_id='Channel ID'
             ),
             data={
                 'sound': 'default',
