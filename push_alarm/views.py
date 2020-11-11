@@ -65,6 +65,9 @@ class CommentPushAlarmView (APIView) :
                     'sound': 'default',
                     'title': F'{title}',
                 },
+                notification=messaging.AndroidNotification(
+                    channel_id='Channel Id'
+                ),
             ),
             token=registration_token,
         )
