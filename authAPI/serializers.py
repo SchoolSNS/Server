@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import User
 from django.contrib import auth
 from django.conf import settings
+from django.contrib.sites.shortcuts import get_current_site
 import requests
 
 class RegisterSerializer (serializers.ModelSerializer) :
@@ -42,17 +43,7 @@ class LoginSerializer (serializers.ModelSerializer) :
         fields = ['email', 'password']
 
 class UserProfileSerializer (serializers.ModelSerializer) :
-    profile = serializers.ImageField(source='image')
 
     class Meta :
         model = User
-        fields = ['id', 'email', 'username', 'profile', 'identity', 'school']
-
-# class DeviceTokenSerializer (serializers.ModelSerializer) :
-
-#     class Meta :
-#         model = DeviceToken
-#         fields = ('device_token', )
-
-#     def create (self, validate_data) :
-#         return DeviceToken.objects.create(**validate_data)
+        fields = ['id', 'email', 'username', 'image', 'identity', 'school']
