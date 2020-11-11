@@ -56,3 +56,4 @@ urllib3==1.25.10
 varname==0.4.0
 whitenoise==5.2.0
 zope.interface==5.1.0
+django-cloudinary-storage==0.3.0
