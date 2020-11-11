@@ -56,18 +56,13 @@ class CommentPushAlarmView (APIView) :
         message = messaging.Message(
             notification=messaging.Notification(
                 title=title,
-                body="예약승인되었습니다.",
             ),
             token=registration_token,
         )
 
         response = messaging.send(message)
 
-        data = QueryDict(F'title={title}')
-
-        serializer = DescriptionSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(post=post)
+        Description.objects.create(post=post, notification_title=title)
 
         return Response({'success': '성공적으로 알람이 전송되었습니다.'})
 

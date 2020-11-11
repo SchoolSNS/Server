@@ -17,6 +17,3 @@ class DescriptionSerializer (serializers.ModelSerializer) :
     class Meta :
         model = Description
         fields = ('post', 'title')
-
-    def create (self, validate_data) :
-        return Description.objects.create(**validate_data)
