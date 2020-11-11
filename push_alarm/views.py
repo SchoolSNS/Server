@@ -66,6 +66,7 @@ class CommentPushAlarmView (APIView) :
                     'title': F'{title}',
                 },
                 notification=messaging.AndroidNotification(
+                    priority='high'
                     channel_id='Channel Id'
                 ),
             ),
