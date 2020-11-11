@@ -74,13 +74,15 @@ class GetAllNotificationView (APIView) :
     permission_classes = [IsAuthenticated]
 
     def get (self, request) :
-        posts = Post.objects.filter(email=self.request.user)
+        user = User.objects.get(email=self.request.user)
+        posts = Post.objects.filter(owner=user)
         data = []
         
-        for post in posts :
-            description = Description.objects.filter(post=post)
-            serializer = DescriptionSerializer(post, many=True)
+        if posts != [] :
+            for post in posts :
+                description = Description.objects.filter(post=post)
+                serializer = DescriptionSerializer(post, many=True)
 
-            data.append(serializer.data)
+                data.append(serializer.data)
 
         return Response(data)
