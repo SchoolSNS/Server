@@ -59,7 +59,7 @@ class CommentPushAlarmView (APIView) :
             ),
             android=messaging.AndroidConfig(
                 priority='high',
-                notification=messaging.AndroidNotification(
+                data=messaging.AndroidNotification(
                     channel_id='Channel Id',
                     priority='high',
                     sound='default',
