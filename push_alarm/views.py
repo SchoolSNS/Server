@@ -57,17 +57,22 @@ class CommentPushAlarmView (APIView) :
             notification=messaging.Notification(
                 title=title,
             ),
-            android: {
-                notification: {
-                    channel_id: "Channel ID", 
-                }
-            },
+            android=messaging.AndroidConfig(
+                channel_id='Channel ID'
+            )
+            data={
+                'sound': 'default',
+                'proprity': 'high',
+                'title': title'
+            }
+            token=registration_token,
+
+            
             data: { 
                 sound: "default",
                 proprity: "high",
-                title: F'{title}',
+                title: F'{title}'
             },
-            token=registration_token,
         )
 
         response = messaging.send(message)
