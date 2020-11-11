@@ -46,7 +46,7 @@ class CommentPushAlarmView (APIView) :
         post = Post.objects.get(pk=postId)
 
         post_owner = User.objects.get(username=post.owner.username)
-        registration_token = DeviceToken.objects.get(user=post_owner.pk)
+        registration_token = DeviceToken.objects.get(user=post_owner)
 
         comment_writer = User.objects.get(email=self.request.user)
 
