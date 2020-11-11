@@ -41,10 +41,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    'cloudinary_storage',
-    'cloudinary',
     'authAPI',
     'feedAPI',
+    'push_alarm',
+    'cloudinary_storage',
+    'cloudinary',
 ]
 
 MIDDLEWARE = [
