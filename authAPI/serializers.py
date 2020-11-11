@@ -43,7 +43,8 @@ class LoginSerializer (serializers.ModelSerializer) :
         fields = ['email', 'password']
 
 class UserProfileSerializer (serializers.ModelSerializer) :
+    profile = serializers.ImageField(source='image')
 
     class Meta :
         model = User
-        fields = ['id', 'email', 'username', 'image', 'identity', 'school']
+        fields = ['id', 'email', 'username', 'profile', 'identity', 'school']
