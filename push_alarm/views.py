@@ -80,7 +80,7 @@ class GetAllNotificationView (APIView) :
                 
                 if descriptions != [] :
                     for description in descriptions :
-                        serializer = DescriptionSerializer(description)
+                        serializer = DescriptionSerializer(description, context={'request', request})
                         data.append(serializer.data)
 
         return Response(data)
