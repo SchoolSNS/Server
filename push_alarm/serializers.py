@@ -16,4 +16,4 @@ class DescriptionSerializer (serializers.ModelSerializer) :
     
     class Meta :
         model = Description
-        fields = ('post', 'title')
+        fields = ('post', 'notification_title')
