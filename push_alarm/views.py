@@ -80,9 +80,11 @@ class GetAllNotificationView (APIView) :
         
         if posts != [] :
             for post in posts :
-                description = Description.objects.filter(post=post)
-                serializer = DescriptionSerializer(post, many=True)
-
-                data.append(serializer.data)
+                descriptions = Description.objects.filter(post=post)
+                
+                if descriptions != [] :
+                    for description in descriptions :
+                        serializer = DescriptionSerializer(description)
+                        data.append(serializer.data)
 
         return Response(data)
