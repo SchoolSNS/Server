@@ -63,7 +63,7 @@ class CommentPushAlarmView (APIView) :
             data={
                 'sound': 'default',
                 'proprity': 'high',
-                'title': title'
+                'title': title
             }
             token=registration_token,
 
