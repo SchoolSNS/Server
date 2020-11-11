@@ -9,4 +9,5 @@ urlpatterns = [
     path('user', include('authAPI.user_urls')),
     path('feed/', include('feedAPI.urls')),
     path('search/', include('searchAPI.urls')),
+    path('push-alarm/', include('push_alarm.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
