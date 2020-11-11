@@ -39,7 +39,7 @@ class CommentPushAlarmView (APIView) :
     def get (self, request) :
 
         if not firebase_admin._apps :
-            cred = credentials.Certificate('hischool-33fa8-firebase-adminsdk-v5fxu-79c7bfc2c4.json')
+            cred = credentials.Certificate('/app/push_alarm/hischool-33fa8-firebase-adminsdk-v5fxu-79c7bfc2c4.json')
             default_app = firebase_admin.initialize_app(cred)
 
         postId = request.GET.get('post_id')
