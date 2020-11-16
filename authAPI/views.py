@@ -51,19 +51,7 @@ class ChangeProfileView (APIView) :
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
-        return Response({'success': '프로필 이미지가 성공적으로 수정 되었습니다.'}, status=200)
-
-class ChangeIntroduceView (APIView) :
-    permission_classes = [IsAuthenticated]
-    serializer_class = ChangeIntroduceSerializer
-
-    def put (self, request) :
-        user = User.objects.get(email=self.request.user)
-        serializer = self.serializer_class(user, data=request.data, context={'request': request})
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-
-        return Response({'success': '한줄소개가 성공적으로 수정 되었습니다.'}, status=200)
+        return Response({'success': '프로필이 성공적으로 수정 되었습니다.'}, status=200)
 
 class UsersPostView (ModelViewSet) :
     serializer_class = PostSerializer

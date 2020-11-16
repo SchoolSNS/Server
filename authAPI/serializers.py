@@ -45,29 +45,16 @@ class ChangeProfileSerializer (serializers.ModelSerializer) :
 
     class Meta :
         model = User
-        fields = ('image', )
+        fields = ('image', 'introduce')
 
     def update (self, instance, validate_data) :
         image = validate_data.get('image', None)
+        introduce = validate_data.get('introduce', None)
 
-        if image is not None :
-            instance.image = image
-            instance.save(update_fields=('image', ))
+        instance.image = image
+        instance.introduce = introduce
 
-        return instance
-
-class ChangeIntroduceSerializer (serializers.ModelSerializer) :
-
-    class Meta :
-        model = User
-        fields = ('introduce', )
-
-    def update (self, instance, validate_data) :
-        introduce = validate_data.get('image', None)
-
-        if introduce is not None :
-            instance.introduce = introduce
-            instance.save(update_fields=('introduce', ))
+        instance.save(update_fields=('image', 'introduce'))
 
         return instance
 
