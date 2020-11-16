@@ -18,6 +18,12 @@ class DeviceTokenView (APIView) :
         serializer.is_valid(raise_exception=True)
         serializer.save(user=self.request.user)
 
+        try :
+            DeviceToken.objects.get(user=self.request.user)
+
+        except :
+            return Response({'message': ['해당 유저에 대한 디바이스 토큰이 이미 존재합니다.']}, status=400)
+
         return Response({'success': '토큰을 저장하였습니다.'})
     
     def put (self, request) :
