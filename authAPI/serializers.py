@@ -2,7 +2,6 @@ from rest_framework import serializers
 from .models import User
 from django.contrib import auth
 from django.conf import settings
-from django.contrib.sites.shortcuts import get_current_site
 import requests
 
 class RegisterSerializer (serializers.ModelSerializer) :
@@ -41,6 +40,36 @@ class LoginSerializer (serializers.ModelSerializer) :
     class Meta :
         model = User
         fields = ['email', 'password']
+
+class ChangeProfileSerializer (serializers.ModelSerializer) :
+
+    class Meta :
+        model = User
+        fields = ('image', )
+
+    def update (self, instance, validate_data) :
+        image = validate_data.get('image', None)
+
+        if image is not None :
+            instance.image = image
+            instance.save(update_fields=('image', ))
+
+        return instance
+
+class ChangeIntroduceSerializer (serializers.ModelSerializer) :
+
+    class Meta :
+        model = User
+        fields = ('introduce', )
+
+    def update (self, instance, validate_data) :
+        introduce = validate_data.get('image', None)
+
+        if introduce is not None :
+            instance.introduce = introduce
+            instance.save(update_fields=('introduce', ))
+
+        return instance
 
 class UserProfileSerializer (serializers.ModelSerializer) :
     profile = serializers.ImageField(source='image')

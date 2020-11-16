@@ -1,6 +1,6 @@
 from .models import User
 from feedAPI.models import Post, Comment
-from .serializers import RegisterSerializer, LoginSerializer, UserProfileSerializer
+from .serializers import *
 from feedAPI.serializers import PostSerializer, CommentSerializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
@@ -41,8 +41,33 @@ class LoginView (GenericAPIView) :
 
         return Response({'token': F'{token[0]}'}, status=200)
 
+class ChangeProfileView (APIView) :
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangeProfileSerializer
+    
+    def put (self, request) :
+        user = User.objects.get(email=self.request.user)
+        serializer = self.serializer_class(user, data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({'success': '프로필 이미지가 성공적으로 수정 되었습니다.'}, status=200)
+
+class ChangeIntroduceView (APIView) :
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangeIntroduceSerializer
+
+    def put (self, request) :
+        user = User.objects.get(email=self.request.user)
+        serializer = self.serializer_class(user, data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        return Response({'success': '한줄소개가 성공적으로 수정 되었습니다.'}, status=200)
+
 class UsersPostView (ModelViewSet) :
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticated]
 
     def get_queryset (self) :
         queryset = Post.objects.filter(owner=self.kwargs.get('user_id'))
