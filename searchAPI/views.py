@@ -81,6 +81,7 @@ class AllUserView (APIView) :
 class PostSearchView (ModelViewSet) :
     pagination_class = LargeResultsSetPagination
     permission_classes = [IsAuthenticated]
+    filter_backends = [SearchFilter]
     search_fields = ['title']
     serializer_class = PostSerializer
     queryset = Post.objects.all()
